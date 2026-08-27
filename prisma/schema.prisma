@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+enum Role {
+  ADOPTER
+  BREEDER
+  VET_STAFF
+  TRANSPORTER
+  ADMIN
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TransportStatus {
+  REQUESTED
+  PICKED_UP
+  IN_TRANSIT
+  ARRIVED
+  CANCELLED
+}
+
+enum ServiceClass {
+  FLIGHT_NANNY
+  CLIMATE_GROUND
+  CARGO
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  role      Role     @default(ADOPTER)
+  firstName String?
+  lastName  String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  pets              Pet[]
+  applications      AdoptionApplication[]
+  transportBookings TransportBooking[]
+  appointments      Appointment[] // if they are a vet
+  brokerageQuizzes  BrokerageQuiz[]
+}
+
+model Pet {
+  id           String   @id @default(uuid())
+  name         String
+  species      String
+  breed        String
+  ageMonths    Int
+  weightLbs    Float
+  temperament  String
+  healthBadges String[] // Array of strings (e.g., ["Vaccinated", "Microchipped"])
+  isLocalOnly  Boolean  @default(true)
+  breederId    String
+  breeder      User     @relation(fields: [breederId], references: [id])
+  mediaGallery String[] // Array of image URLs
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  applications      AdoptionApplication[]
+  appointments      Appointment[]
+  passportRecord    PassportRecord?
+  transportBookings TransportBooking[]
+}
+
+model AdoptionApplication {
+  id                   String            @id @default(uuid())
+  petId                String
+  pet                  Pet               @relation(fields: [petId], references: [id])
+  adopterId            String
+  adopter              User              @relation(fields: [adopterId], references: [id])
+  status               ApplicationStatus @default(PENDING)
+  homeQuestionnaire    Json?
+  meetAndGreetSchedule DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  petId       String
+  pet         Pet      @relation(fields: [petId], references: [id])
+  vetId       String?
+  vet         User?    @relation(fields: [vetId], references: [id])
+  serviceType String
+  scheduledAt DateTime
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PassportRecord {
+  id                String   @id @default(uuid())
+  petId             String   @unique
+  pet               Pet      @relation(fields: [petId], references: [id])
+  cviPdfUrl         String?
+  microchipId       String?
+  rabiesTiterResult String?
+  vaccinationLogs   Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model TransportBooking {
+  id            String          @id @default(uuid())
+  petId         String
+  pet           Pet             @relation(fields: [petId], references: [id])
+  transporterId String?
+  transporter   User?           @relation(fields: [transporterId], references: [id])
+  origin        String
+  destination   String
+  serviceClass  ServiceClass
+  status        TransportStatus @default(REQUESTED)
+  costEstimate  Float?
+  feedWaterLogs Json?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model BrokerageQuiz {
+  id                   String   @id @default(uuid())
+  adopterId            String
+  adopter              User     @relation(fields: [adopterId], references: [id])
+  budget               Float?
+  preferredBreed       String?
+  preferredTemperament String?
+  housingType          String?
+  escrowStatus         String   @default("PENDING") // mocked
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
