@@ -145,3 +145,19 @@ model BrokerageQuiz {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
+
+model BreederApplication {
+  id              String            @id @default(uuid())
+  firstName       String
+  lastName        String
+  email           String            @unique
+  phone           String
+  kennelName      String
+  websiteUrl      String?
+  facilityType    String
+  usdaLicense     String?
+  healthPractices String
+  status          ApplicationStatus @default(PENDING)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}

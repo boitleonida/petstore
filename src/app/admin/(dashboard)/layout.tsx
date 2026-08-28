@@ -9,7 +9,8 @@ import {
   PawPrint, 
   Truck, 
   LogOut,
-  Menu
+  Menu,
+  ShieldCheck
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,7 @@ const sidebarLinks = [
   { name: "Transport & Orders", href: "/admin/transport", icon: Truck },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Pets", href: "/admin/pets", icon: PawPrint },
+  { name: "Breeder Apps", href: "/admin/breeder-apps", icon: ShieldCheck },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
