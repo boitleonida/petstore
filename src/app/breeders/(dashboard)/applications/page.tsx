@@ -9,42 +9,40 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import prisma from "@/lib/prisma"
 
-export default function BreederApplicationsPage() {
-  const applications = [
-    {
-      id: "APP-001",
-      buyer: "John Smith",
-      pet: "Luna (Golden Retriever)",
-      status: "Pending",
-      date: "Oct 12, 2026",
-      action: "Review"
+export const dynamic = "force-dynamic"
+
+export default async function BreederApplicationsPage() {
+  // Fetch live applications for the demo breeder's pets
+  const rawApplications = await prisma.adoptionApplication.findMany({
+    where: {
+      pet: {
+        breeder: {
+          email: 'demo.breeder@texaspethub.com'
+        }
+      }
     },
-    {
-      id: "APP-002",
-      buyer: "Sarah Williams",
-      pet: "Milo (French Bulldog)",
-      status: "Approved",
-      date: "Oct 11, 2026",
-      action: "View"
+    include: {
+      pet: true,
+      adopter: true
     },
-    {
-      id: "APP-003",
-      buyer: "Michael Brown",
-      pet: "Bella (Maine Coon)",
-      status: "Pending",
-      date: "Oct 10, 2026",
-      action: "Review"
-    },
-    {
-      id: "APP-004",
-      buyer: "Emily Davis",
-      pet: "Charlie (Labradoodle)",
-      status: "Rejected",
-      date: "Oct 08, 2026",
-      action: "View"
+    orderBy: {
+      createdAt: 'desc'
     }
-  ]
+  })
+
+  // Format the dates and structure for the table
+  const applications = rawApplications.map(app => ({
+    id: app.id.split('-')[0].toUpperCase(), // Shorten UUID for display
+    buyer: `${app.adopter.firstName} ${app.adopter.lastName}`,
+    pet: `${app.pet.name} (${app.pet.breed})`,
+    status: app.status.charAt(0).toUpperCase() + app.status.slice(1).toLowerCase(),
+    date: app.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    action: app.status === 'PENDING' ? "Review" : "View"
+  }))
+
+  const pendingCount = applications.filter(a => a.status === 'Pending').length
 
   return (
     <div className="space-y-6">
@@ -59,7 +57,7 @@ export default function BreederApplicationsPage() {
         <CardHeader>
           <CardTitle>Application Inbox</CardTitle>
           <CardDescription>
-            You have 2 pending applications that require your review.
+            You have {pendingCount} pending applications that require your review.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -102,6 +100,13 @@ export default function BreederApplicationsPage() {
                   </TableCell>
                 </TableRow>
               ))}
+              {applications.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    No applications received yet.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
