@@ -63,6 +63,8 @@ model Pet {
   weightLbs    Float
   temperament  String
   healthBadges String[] // Array of strings (e.g., ["Vaccinated", "Microchipped"])
+  description  String   @default("A wonderful companion looking for a loving home.")
+  price        Float    @default(0.0)
   isLocalOnly  Boolean  @default(true)
   breederId    String
   breeder      User     @relation(fields: [breederId], references: [id])
