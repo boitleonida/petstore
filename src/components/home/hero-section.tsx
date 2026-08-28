@@ -59,14 +59,12 @@ export function HeroSection() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4"
           >
-            <Button size="lg" className="rounded-full text-base h-12 px-8" asChild>
-              <Link href="/browse">
-                Browse Pets
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
+            <Button size="lg" className="rounded-full text-base h-12 px-8" render={<Link href="/browse" />}>
+              Browse Pets
+              <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full text-base h-12 px-8 bg-background/50 backdrop-blur-sm" asChild>
-              <Link href="/quiz">Take the Match Quiz</Link>
+            <Button size="lg" variant="outline" className="rounded-full text-base h-12 px-8 bg-background/50 backdrop-blur-sm" render={<Link href="/quiz" />}>
+              Take the Match Quiz
             </Button>
           </motion.div>
         </div>

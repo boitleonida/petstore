@@ -76,11 +76,11 @@ export function Navbar() {
 
           <ThemeToggle />
 
-          <Button variant="outline" className="hidden sm:inline-flex rounded-full" asChild>
-            <Link href="/login">Sign In</Link>
+          <Button variant="outline" className="hidden sm:inline-flex rounded-full" render={<Link href="/login" />}>
+            Sign In
           </Button>
-          <Button className="hidden sm:inline-flex rounded-full" asChild>
-            <Link href="/register">Sign Up</Link>
+          <Button className="hidden sm:inline-flex rounded-full" render={<Link href="/register" />}>
+            Sign Up
           </Button>
 
           {/* Mobile Navigation Sheet */}
@@ -105,11 +105,11 @@ export function Navbar() {
                   </Link>
                 ))}
                 <div className="h-px bg-border my-2" />
-                <Button variant="outline" className="w-full justify-start rounded-full" asChild>
-                  <Link href="/login">Sign In</Link>
+                <Button variant="outline" className="w-full justify-start rounded-full" render={<Link href="/login" />}>
+                  Sign In
                 </Button>
-                <Button className="w-full justify-start rounded-full" asChild>
-                  <Link href="/register">Sign Up</Link>
+                <Button className="w-full justify-start rounded-full" render={<Link href="/register" />}>
+                  Sign Up
                 </Button>
               </nav>
             </SheetContent>

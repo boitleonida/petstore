@@ -26,11 +26,9 @@ export default function Home() {
           <p className="text-xl opacity-90 mb-10 max-w-2xl mx-auto">
             Join thousands of happy families who found their perfect companion through our trusted network.
           </p>
-          <Button size="lg" variant="secondary" className="rounded-full text-lg h-14 px-10 text-primary hover:scale-105 transition-transform" asChild>
-            <Link href="/browse">
-              Start Browsing Now
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Link>
+          <Button size="lg" variant="secondary" className="rounded-full text-lg h-14 px-10 text-primary hover:scale-105 transition-transform" render={<Link href="/browse" />}>
+            Start Browsing Now
+            <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </section>

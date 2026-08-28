@@ -143,8 +143,8 @@ export function FeaturedPets() {
               Meet some of the newest additions from our verified breeders. Ready to find their forever homes.
             </p>
           </div>
-          <Button variant="outline" className="rounded-full" asChild>
-            <Link href="/browse">View All Pets</Link>
+          <Button variant="outline" className="rounded-full" render={<Link href="/browse" />}>
+            View All Pets
           </Button>
         </div>
 
