@@ -102,9 +102,9 @@ export default async function AddPetPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="photoUrl">Photo URL (Primary)</Label>
-              <Input id="photoUrl" name="photoUrl" required placeholder="https://images.unsplash.com/..." />
-              <p className="text-xs text-muted-foreground">For now, paste a direct URL to an image.</p>
+              <Label htmlFor="photo">Pet Photo</Label>
+              <Input id="photo" name="photo" type="file" accept="image/*" required />
+              <p className="text-xs text-muted-foreground">Upload a photo of the pet.</p>
             </div>
             <div className="flex items-center space-x-2 pt-4">
               <Checkbox id="isLocalOnly" name="isLocalOnly" value="true" />
