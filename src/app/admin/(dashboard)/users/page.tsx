@@ -1,5 +1,3 @@
-"use client"
-
 import {
   Table,
   TableBody,
@@ -9,114 +7,75 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { MoreHorizontal } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { UserCircle2, ShieldCheck } from "lucide-react"
+import prisma from "@/lib/prisma"
 
-const users = [
-  {
-    id: "USR-001",
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Buyer",
-    status: "Active",
-    joined: "Aug 15, 2026"
-  },
-  {
-    id: "USR-002",
-    name: "Sarah Smith",
-    email: "sarah.smith@breeder.com",
-    role: "Breeder",
-    status: "Pending Verification",
-    joined: "Aug 26, 2026"
-  },
-  {
-    id: "USR-003",
-    name: "Emily Chen",
-    email: "emilyc@example.com",
-    role: "Buyer",
-    status: "Active",
-    joined: "Aug 10, 2026"
-  },
-  {
-    id: "USR-004",
-    name: "Mike Johnson",
-    email: "mj@example.com",
-    role: "Buyer",
-    status: "Active",
-    joined: "Aug 05, 2026"
-  },
-  {
-    id: "USR-005",
-    name: "Happy Paws Kennel",
-    email: "contact@happypaws.com",
-    role: "Breeder",
-    status: "Verified",
-    joined: "Jul 22, 2026"
-  }
-]
+export const dynamic = "force-dynamic"
 
-export default function UsersAdmin() {
+export default async function AdminUsersPage() {
+  const users = await prisma.user.findMany({
+    orderBy: { createdAt: 'desc' }
+  })
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-        <p className="text-muted-foreground mt-2">
-          View all registered buyers and manage breeder verifications.
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">Platform Users</h1>
+        <p className="text-muted-foreground mt-2">Manage breeders, adopters, and staff accounts.</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Registered Users</CardTitle>
-          <CardDescription>
-            A list of all users on the platform.
-          </CardDescription>
+          <CardTitle>All Users</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>User</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Joined</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Joined</TableHead>
-                <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.id}</TableCell>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <Badge variant={user.role === "Breeder" ? "default" : "secondary"}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                        <UserCircle2 className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{user.firstName} {user.lastName}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      {user.role === "BREEDER" && <ShieldCheck className="w-4 h-4 text-blue-500" />}
                       {user.role}
-                    </Badge>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <Badge 
-                      variant="outline"
-                      className={
-                        user.status === "Verified" || user.status === "Active" 
-                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" 
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                      }
-                    >
-                      {user.status}
-                    </Badge>
+                    {user.createdAt.toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="text-right text-muted-foreground">{user.joined}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                  <TableCell>
+                    <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                      Active
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}
+              {users.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                    No users found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>

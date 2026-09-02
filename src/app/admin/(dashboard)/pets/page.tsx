@@ -1,5 +1,3 @@
-"use client"
-
 import {
   Table,
   TableBody,
@@ -10,111 +8,86 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MoreHorizontal } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Plus } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
+import prisma from "@/lib/prisma"
 
-const pets = [
-  {
-    id: "PET-001",
-    name: "Luna",
-    breed: "Golden Retriever",
-    category: "Dog",
-    status: "Available",
-    price: "$2,500"
-  },
-  {
-    id: "PET-002",
-    name: "Milo",
-    breed: "French Bulldog",
-    category: "Dog",
-    status: "Pending Transport",
-    price: "$3,200"
-  },
-  {
-    id: "PET-003",
-    name: "Bella",
-    breed: "Maine Coon",
-    category: "Cat",
-    status: "Adopted",
-    price: "$1,800"
-  },
-  {
-    id: "PET-004",
-    name: "Charlie",
-    breed: "Labradoodle",
-    category: "Dog",
-    status: "Available",
-    price: "$2,100"
-  },
-  {
-    id: "PET-005",
-    name: "Rio",
-    breed: "Macaw Parrot",
-    category: "Bird",
-    status: "Available",
-    price: "$3,500"
-  }
-]
+export const dynamic = "force-dynamic"
 
-export default function PetsAdmin() {
+export default async function AdminPetsPage() {
+  const pets = await prisma.pet.findMany({
+    include: {
+      breeder: true
+    },
+    orderBy: { createdAt: 'desc' }
+  })
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pet Management</h1>
-        <p className="text-muted-foreground mt-2">
-          View and manage all pets currently listed by verified breeders.
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Manage Pets</h1>
+          <p className="text-muted-foreground mt-1">
+            View all pets currently listed on the platform and add new ones.
+          </p>
+        </div>
+        <Button className="rounded-full" render={<Link href="/admin/pets/new" />}>
+          <Plus className="w-4 h-4 mr-2" /> Add New Pet
+        </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Listed Pets</CardTitle>
+          <CardTitle>All Listings</CardTitle>
           <CardDescription>
-            A comprehensive list of all pets on the platform.
+            There are {pets.length} active pets on Texas Pet Hub.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Pet ID</TableHead>
+                <TableHead className="w-[80px]">Photo</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Breed</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Price</TableHead>
-                <TableHead></TableHead>
+                <TableHead>Breed / Species</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Breeder</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {pets.map((pet) => (
                 <TableRow key={pet.id}>
-                  <TableCell className="font-medium">{pet.id}</TableCell>
-                  <TableCell>{pet.name}</TableCell>
-                  <TableCell>{pet.breed}</TableCell>
-                  <TableCell>{pet.category}</TableCell>
                   <TableCell>
-                    <Badge 
-                      variant="outline"
-                      className={
-                        pet.status === "Available" 
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" 
-                          : pet.status === "Adopted"
-                          ? "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400"
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                      }
-                    >
-                      {pet.status}
-                    </Badge>
+                    <div className="relative w-12 h-12 rounded-md overflow-hidden bg-muted">
+                      {pet.mediaGallery[0] && (
+                        <Image src={pet.mediaGallery[0]} alt={pet.name} fill className="object-cover" />
+                      )}
+                    </div>
                   </TableCell>
-                  <TableCell className="text-right font-medium">{pet.price}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                  <TableCell className="font-medium">{pet.name}</TableCell>
+                  <TableCell>
+                    {pet.breed}
+                    <div className="text-xs text-muted-foreground">{pet.species}</div>
+                  </TableCell>
+                  <TableCell>${pet.price.toLocaleString()}</TableCell>
+                  <TableCell>
+                    {pet.breeder.firstName} {pet.breeder.lastName}
+                  </TableCell>
+                  <TableCell className="text-right space-x-2">
+                    <Button variant="outline" size="sm" render={<Link href={`/browse/${pet.id}`} />}>View</Button>
                   </TableCell>
                 </TableRow>
               ))}
+              {pets.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    No pets found. Add one to get started!
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>

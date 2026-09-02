@@ -16,45 +16,75 @@ const stats = [
   },
   {
     title: "Total Users",
-    value: "2,350",
-    change: "+180 this month",
-    icon: Users,
-  },
-  {
-    title: "Active Listings",
-    value: "142",
-    change: "+12 since yesterday",
-    icon: Activity,
-  }
-]
+import { Users, PawPrint, TrendingUp, AlertCircle, ShieldCheck } from "lucide-react"
+import prisma from "@/lib/prisma"
+import Link from "next/link"
 
-export default function AdminOverview() {
+export const dynamic = "force-dynamic"
+
+export default async function AdminDashboardOverview() {
+  const [totalPets, totalUsers, pendingBreederApps, totalApplications] = await Promise.all([
+    prisma.pet.count(),
+    prisma.user.count(),
+    prisma.breederApplication.count({ where: { status: 'PENDING' } }),
+    prisma.adoptionApplication.count()
+  ])
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-        <p className="text-muted-foreground mt-2">
-          Monitor your platform's activity, revenue, and ongoing pet transports.
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">Platform Overview</h1>
+        <p className="text-muted-foreground mt-2">Here's what's happening on Texas Pet Hub today.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {stat.change}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Pets Listed</CardTitle>
+            <PawPrint className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalPets}</div>
+            <p className="text-xs text-muted-foreground">Active in database</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+            <p className="text-xs text-muted-foreground">Breeders & Adopters</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Adoption Apps</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalApplications}</div>
+            <p className="text-xs text-muted-foreground">All time submissions</p>
+          </CardContent>
+        </Card>
+
+        <Card className={pendingBreederApps > 0 ? "border-yellow-500 bg-yellow-500/10" : ""}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Breeder Apps</CardTitle>
+            {pendingBreederApps > 0 ? (
+              <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-500" />
+            ) : (
+              <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+            )}
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingBreederApps}</div>
+            <p className="text-xs text-muted-foreground">Pending review</p>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -63,39 +93,35 @@ export default function AdminOverview() {
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-8">
-              {[
-                { name: "John Doe", action: "purchased a Golden Retriever", time: "2 hours ago" },
-                { name: "Sarah Smith", action: "registered as a verified breeder", time: "5 hours ago" },
-                { name: "Transport #1024", action: "status updated to 'In Transit'", time: "6 hours ago" },
-                { name: "Mike Johnson", action: "paid transport fee ($450.00)", time: "1 day ago" },
-              ].map((item, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="ml-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {item.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.action}
-                    </p>
-                  </div>
-                  <div className="ml-auto font-medium text-xs text-muted-foreground">
-                    {item.time}
-                  </div>
-                </div>
-              ))}
+            <div className="text-center py-12 text-muted-foreground">
+              Live activity feed coming in next phase.
             </div>
           </CardContent>
         </Card>
 
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>Pending Approvals</CardTitle>
+            <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-center py-12 text-muted-foreground">
-              No pending breeder approvals.
-            </div>
+          <CardContent className="space-y-4">
+            <Link href="/admin/pets" className="flex items-center justify-between p-4 border rounded-xl hover:bg-muted/50 transition-colors">
+              <div className="flex items-center gap-3">
+                <PawPrint className="w-5 h-5 text-primary" />
+                <span className="font-medium">Manage Pets</span>
+              </div>
+            </Link>
+            <Link href="/admin/breeder-apps" className="flex items-center justify-between p-4 border rounded-xl hover:bg-muted/50 transition-colors">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="w-5 h-5 text-blue-500" />
+                <span className="font-medium">Review Breeders</span>
+              </div>
+            </Link>
+            <Link href="/admin/users" className="flex items-center justify-between p-4 border rounded-xl hover:bg-muted/50 transition-colors">
+              <div className="flex items-center gap-3">
+                <Users className="w-5 h-5 text-green-500" />
+                <span className="font-medium">Manage Users</span>
+              </div>
+            </Link>
           </CardContent>
         </Card>
       </div>
