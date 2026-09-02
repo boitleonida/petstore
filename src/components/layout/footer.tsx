@@ -1,7 +1,16 @@
+"use client"
+
 import Link from "next/link"
 import { Globe, Mail, MessageCircle, PawPrint } from "lucide-react"
+import { usePathname } from "next/navigation"
 
 export function Footer() {
+  const pathname = usePathname()
+  
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <footer className="border-t bg-muted/40">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-16">

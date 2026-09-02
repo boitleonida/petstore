@@ -4,13 +4,23 @@ import type { NextRequest } from 'next/server'
 export async function proxy(request: NextRequest) {
   // Simple check for session cookie
   const session = request.cookies.get('session')?.value
+  const adminToken = request.cookies.get('admin_token')?.value
+
+  const pathname = request.nextUrl.pathname
+
+  // Admin routes protection
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+    if (!adminToken) {
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+  }
 
   // Protected routes prefixes
-  const protectedRoutes = ['/admin', '/breeders/applications', '/breeders/dashboard', '/breeders/pets']
+  const breederRoutes = ['/breeders/applications', '/breeders/dashboard', '/breeders/pets']
 
-  const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))
+  const isBreederRoute = breederRoutes.some(route => pathname.startsWith(route))
 
-  if (isProtectedRoute && !session) {
+  if (isBreederRoute && !session) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 

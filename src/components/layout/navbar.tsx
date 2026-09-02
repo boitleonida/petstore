@@ -22,6 +22,11 @@ export function Navbar({ session }: { session?: any }) {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = React.useState(false)
 
+  // Hide navbar on admin pages
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   // Handle scroll for glassmorphism effect
   React.useEffect(() => {
     const handleScroll = () => {
