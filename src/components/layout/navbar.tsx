@@ -18,7 +18,7 @@ const navigation = [
   { name: "Transport Tracking", href: "/tracking" },
 ]
 
-export function Navbar() {
+export function Navbar({ session }: { session?: any }) {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = React.useState(false)
 
@@ -30,6 +30,12 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const handleLogout = async () => {
+    // A quick client-side way to clear the cookie and reload
+    document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.href = "/";
+  }
 
   return (
     <header
@@ -76,12 +82,33 @@ export function Navbar() {
 
           <ThemeToggle />
 
-          <Button variant="outline" className="hidden sm:inline-flex rounded-full" render={<Link href="/login" />}>
-            Sign In
-          </Button>
-          <Button className="hidden sm:inline-flex rounded-full" render={<Link href="/register" />}>
-            Sign Up
-          </Button>
+          {session ? (
+            <div className="hidden sm:flex items-center gap-4">
+              <span className="text-sm font-medium">Hello, {session.firstName}</span>
+              {session.role === "ADMIN" && (
+                <Button variant="outline" className="rounded-full" render={<Link href="/admin/dashboard" />}>
+                  Dashboard
+                </Button>
+              )}
+              {session.role === "BREEDER" && (
+                <Button variant="outline" className="rounded-full" render={<Link href="/breeders" />}>
+                  Dashboard
+                </Button>
+              )}
+              <Button variant="ghost" className="rounded-full" onClick={handleLogout}>
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Button variant="outline" className="hidden sm:inline-flex rounded-full" render={<Link href="/login" />}>
+                Sign In
+              </Button>
+              <Button className="hidden sm:inline-flex rounded-full" render={<Link href="/register" />}>
+                Sign Up
+              </Button>
+            </>
+          )}
 
           {/* Mobile Navigation Sheet */}
           <Sheet>
@@ -105,12 +132,34 @@ export function Navbar() {
                   </Link>
                 ))}
                 <div className="h-px bg-border my-2" />
-                <Button variant="outline" className="w-full justify-start rounded-full" render={<Link href="/login" />}>
-                  Sign In
-                </Button>
-                <Button className="w-full justify-start rounded-full" render={<Link href="/register" />}>
-                  Sign Up
-                </Button>
+                
+                {session ? (
+                  <>
+                    <span className="text-lg font-medium">Hello, {session.firstName}</span>
+                    {session.role === "ADMIN" && (
+                      <Button variant="outline" className="w-full justify-start rounded-full" render={<Link href="/admin/dashboard" />}>
+                        Dashboard
+                      </Button>
+                    )}
+                    {session.role === "BREEDER" && (
+                      <Button variant="outline" className="w-full justify-start rounded-full" render={<Link href="/breeders" />}>
+                        Dashboard
+                      </Button>
+                    )}
+                    <Button variant="ghost" className="w-full justify-start rounded-full text-red-500" onClick={handleLogout}>
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" className="w-full justify-start rounded-full" render={<Link href="/login" />}>
+                      Sign In
+                    </Button>
+                    <Button className="w-full justify-start rounded-full" render={<Link href="/register" />}>
+                      Sign Up
+                    </Button>
+                  </>
+                )}
               </nav>
             </SheetContent>
           </Sheet>

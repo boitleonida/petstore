@@ -1,21 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Truck, DollarSign, Activity } from "lucide-react"
-
-const stats = [
-  {
-    title: "Total Revenue",
-    value: "$45,231.89",
-    change: "+20.1% from last month",
-    icon: DollarSign,
-  },
-  {
-    title: "Active Transports",
-    value: "12",
-    change: "+3 in the last week",
-    icon: Truck,
-  },
-  {
-    title: "Total Users",
 import { Users, PawPrint, TrendingUp, AlertCircle, ShieldCheck } from "lucide-react"
 import prisma from "@/lib/prisma"
 import Link from "next/link"
