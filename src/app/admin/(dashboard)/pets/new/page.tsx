@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -116,9 +116,9 @@ export default async function AddPetPage() {
         </Card>
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" asChild>
-            <Link href="/admin/pets">Cancel</Link>
-          </Button>
+          <Link href="/admin/pets" className={buttonVariants({ variant: "outline" })}>
+            Cancel
+          </Link>
           <Button type="submit">Create Pet Listing</Button>
         </div>
       </form>
