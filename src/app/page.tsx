@@ -6,13 +6,21 @@ import { Testimonials } from "@/components/home/testimonials";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import prisma from "@/lib/prisma";
 
-export default function Home() {
+export const dynamic = "force-dynamic"
+
+export default async function Home() {
+  const latestPets = await prisma.pet.findMany({
+    take: 8,
+    orderBy: { createdAt: 'desc' }
+  })
+
   return (
     <div className="flex flex-col min-h-screen">
       <HeroSection />
       <PetCategories />
-      <FeaturedPets />
+      <FeaturedPets pets={latestPets} />
       <HowItWorks />
       <Testimonials />
       
