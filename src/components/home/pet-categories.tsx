@@ -18,16 +18,16 @@ const categories = [
     description: "Independent and affectionate friends."
   },
   {
-    name: "Fish & Aquatics",
-    href: "/browse?category=fish",
-    image: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?q=80&w=600&auto=format&fit=crop",
-    description: "Bring a piece of the ocean home."
+    name: "Birds",
+    href: "/browse?category=birds",
+    image: "/images/pets/birds/birds_456_talking-catalina-mac_1.jpg",
+    description: "Vibrant, intelligent avian friends."
   },
   {
-    name: "Small Pets",
-    href: "/browse?category=small-pets",
-    image: "https://images.unsplash.com/photo-1425082661705-1834bfd0999c?q=80&w=600&auto=format&fit=crop",
-    description: "Hamsters, guinea pigs, and more."
+    name: "All Pets",
+    href: "/browse",
+    image: "https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=600&auto=format&fit=crop",
+    description: "Explore all available companions."
   }
 ]
 
