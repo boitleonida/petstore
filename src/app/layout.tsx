@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { Suspense } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { getSession } from "@/lib/auth";
 
 const geistSans = Geist({
@@ -40,6 +42,9 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
           <Navbar session={session} />
           {/* Main content pushed down to account for the fixed header */}
           <main className="flex-1 mt-16 flex flex-col">
