@@ -7,7 +7,6 @@ import {
   LayoutDashboard, 
   Users, 
   PawPrint, 
-  Truck, 
   LogOut,
   Menu,
   ShieldCheck
@@ -19,7 +18,6 @@ import { logoutAction } from "@/app/admin/actions"
 
 const sidebarLinks = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
-  { name: "Transport & Orders", href: "/admin/transport", icon: Truck },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Pets", href: "/admin/pets", icon: PawPrint },
   { name: "Breeder Apps", href: "/admin/breeder-apps", icon: ShieldCheck },
